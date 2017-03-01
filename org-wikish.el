@@ -86,6 +86,17 @@
   (interactive (list (completing-read "Org file: " (org-wikish-page-completion-list))))
   (org-open-file (org-wikish-word-to-path name)))
 
+(defun org-wikish-export-all-to-html ()
+  (interactive)
+  (save-excursion
+    (mapc
+     (lambda (file)
+       (with-temp-buffer
+         (find-file file)
+         (org-html-export-to-html)))
+     (file-expand-wildcards (concat (file-name-as-directory org-wikish-notes-directory)
+                                    "*.org")))))
+
 (define-key org-mode-map (kbd "C-c w g") #'org-wikish-link-word-at-point)
 (define-key org-mode-map (kbd "C-c w G") #'org-wikish-link-word-at-point-and-enter)
 (define-key org-mode-map (kbd "C-c w o") #'org-wikish-open-link-at-point)
