@@ -1,0 +1,13 @@
+#+TITLE: org-wikish
+
+~org-wikish~ is a simple wiki system for org. It uses a flat directory
+structure in a single directory.
+
+* Available commands
+
+| Command                                 | Key     | Description                                              |
+|-----------------------------------------+---------+----------------------------------------------------------|
+| org-wikish-link-word-at-point           | ~C-c w g~ | Link the word at point to the correct wiki file.         |
+| org-wikish-link-word-at-point-and-enter | ~C-c w G~ | Link the word at point and go to that wiki file.         |
+| org-wikish-open-link-at-point           | ~C-c w o~ | If on a link, follow it; otherwise create then follow it |
+| org-wikish-find-page                    | ~C-c w f~ | Go to or create wiki page using completing-read          |
