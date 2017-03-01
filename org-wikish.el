@@ -1,3 +1,7 @@
+(require 'cl)
+(require 'subr-x)
+(require 'org)
+
 (defvar org-wikish-notes-directory "/your/directory/here/")
 
 (defun org-wikish-split-camelcase (word)
