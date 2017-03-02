@@ -49,13 +49,14 @@
 
 (defun org-wikish-link-word-at-point ()
   (interactive)
-  (let ((bounds (bounds-of-thing-at-point 'symbol)))
-    (when bounds
-      (let* ((word (buffer-substring-no-properties (car bounds) (cdr bounds)))
-             (filename (org-wikish-word-to-filename word))
-             (link (org-wikish-word-to-link word)))
-        (delete-region (car bounds) (cdr bounds))
-        (insert link)))))
+  (save-excursion
+    (let ((bounds (bounds-of-thing-at-point 'symbol)))
+      (when bounds
+        (let* ((word (buffer-substring-no-properties (car bounds) (cdr bounds)))
+               (filename (org-wikish-word-to-filename word))
+               (link (org-wikish-word-to-link word)))
+          (delete-region (car bounds) (cdr bounds))
+          (insert link))))))
 
 (defun org-wikish-ensure-page-exists (word)
   (let ((path (org-wikish-word-to-path word)))
