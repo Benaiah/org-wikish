@@ -1,7 +1,51 @@
-(require 'cl)
+;;; org-wikish.el --- simple org wiki
+;;
+;; Filename: org-wikish.el
+;; Description: Supplies simple commands and keybindings for building a personal wiki in org-mode
+;; Author: Benaiah Mischenko
+;; Maintainer: Benaiah Mischenko
+;; Created: Feb 10 2017
+;; Version: 0.1
+;; Package-Requires: (org)
+;; Last-Updated: Tue May 12 2016
+;;           By: Benaiah Mischenko
+;;     Update #: 1
+;; URL: http://github.com/benaiah/org-wikish
+;; Doc URL: http://github.com/benaiah/org-wikish
+;; Keywords: org, wiki
+;; Compatibility: GNU Emacs: 24.x, 25.x
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;;; Commentary:
+;;
+;; This supplies simple commands and keybindings for building a
+;; personal wiki in org-mode.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;;; Code:
+
+(require 'cl-lib)
 (require 'subr-x)
 (require 'org)
 
+;;;###autoload
 (defvar org-wikish-notes-directory "/your/directory/here/")
 
 (defun org-wikish-split-camelcase (word)
@@ -80,9 +124,10 @@
 (defun org-wikish-page-completion-list ()
   (mapcar (lambda (filename)
             (org-wikish-file-name-to-word filename))
-          (remove-if-not (lambda (filename) (string-match "\\.org$" filename))
-                         (directory-files org-wikish-notes-directory))))
+          (cl-remove-if-not (lambda (filename) (string-match "\\.org$" filename))
+                            (directory-files org-wikish-notes-directory))))
 
+;;;###autoload
 (defun org-wikish-find-page (name)
   (interactive (list (completing-read "Org file: " (org-wikish-page-completion-list))))
   (org-open-file (org-wikish-word-to-path name)))
@@ -98,8 +143,18 @@
      (file-expand-wildcards (concat (file-name-as-directory org-wikish-notes-directory)
                                     "*.org")))))
 
-(define-key org-mode-map (kbd "C-c w g") #'org-wikish-link-word-at-point)
-(define-key org-mode-map (kbd "C-c w G") #'org-wikish-link-word-at-point-and-enter)
-(define-key org-mode-map (kbd "C-c w o") #'org-wikish-open-link-at-point)
-(define-key global-map (kbd "C-c w f") #'org-wikish-find-page)
+;;;###autoload
+(define-minor-mode org-wikish-mode
+  "Toggle org-wikish mode."
+  :init-value nil
+  :lighter " Wikish"
+  :keymap'(([C-c w g] . org-wikish-link-word-at-point)
+           ([C-c w o] . org-wikish-open-page-at-point)))
 
+;;;###autoload
+(defun org-wikish-recommended-global-keybindings ()
+  (define-key global-map (kbd "C-c w f") #'org-wikish-find-page))
+
+(provide 'org-wikish)
+
+;;; org-wikish.el ends here
