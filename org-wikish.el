@@ -118,7 +118,7 @@
     (if (not (file-exists-p path))
         (write-region "" nil path))))
 
-(defun org-wikish-open-link-at-point ()
+(defun org-wikish-open-page-at-point ()
   "Turn the word at point into an org link to the corresponding page, and go to that page."
   (interactive)
   (if (org-in-regexp org-bracket-link-regexp 1)
@@ -158,8 +158,8 @@
   "Toggle org-wikish mode."
   :init-value nil
   :lighter " Wikish"
-  :keymap'(([C-c w g] . org-wikish-link-word-at-point)
-           ([C-c w o] . org-wikish-open-page-at-point)))
+  :keymap `((,(kbd "C-c w g") . org-wikish-link-word-at-point)
+            (,(kbd "C-c w o") . org-wikish-open-page-at-point)))
 
 ;;;###autoload
 (defun org-wikish-recommended-global-keybindings ()
