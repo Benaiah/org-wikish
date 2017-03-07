@@ -6,13 +6,13 @@
 ;; Maintainer: Benaiah Mischenko
 ;; Created: Feb 10 2017
 ;; Version: 0.1
-;; Package-Requires: (org)
+;; Package-Requires: ((emacs "24.4") (org "8.2.10"))
 ;; Last-Updated: Tue May 12 2016
 ;;           By: Benaiah Mischenko
 ;;     Update #: 1
 ;; URL: http://github.com/benaiah/org-wikish
 ;; Doc URL: http://github.com/benaiah/org-wikish
-;; Keywords: org, wiki
+;; Keywords: outlines
 ;; Compatibility: GNU Emacs: 24.x, 25.x
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
