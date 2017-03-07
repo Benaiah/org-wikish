@@ -46,7 +46,7 @@
 (require 'org)
 
 ;;;###autoload
-(defvar org-wikish-notes-directory "/your/directory/here/")
+(defvar org-wikish-wiki-directory "/your/directory/here/")
 
 (defun org-wikish-split-camelcase (word)
   (let ((case-fold-search nil))
@@ -64,7 +64,7 @@
            (split-string (replace-regexp-in-string "\\.org$" "" filename) "-"))))
 
 (defun org-wikish-file-name-to-path (filename)
-  (concat (file-name-as-directory org-wikish-notes-directory) filename))
+  (concat (file-name-as-directory org-wikish-wiki-directory) filename))
 
 (defun org-wikish-file-name (path)
   (concat (file-name-base path) (file-name-extension path)))
@@ -74,13 +74,13 @@
     (if (and (file-name-absolute-p path)
              buffer-path
              (org-wikish-in-wiki-p buffer-path))
-        (let ((newpath (file-relative-name path org-wikish-notes-directory)))
+        (let ((newpath (file-relative-name path org-wikish-wiki-directory)))
           (concat "./" newpath))
       path)))
 
 (defun org-wikish-word-to-path (word)
   (org-wikish-maybe-relative-path
-   (concat (file-name-as-directory org-wikish-notes-directory)
+   (concat (file-name-as-directory org-wikish-wiki-directory)
            (org-wikish-word-to-filename word))))
 
 (defun org-wikish-word-to-link (word)
@@ -89,7 +89,7 @@
 (defun org-wikish-in-wiki-p (path)
   (string-equal
    (file-name-directory path)
-   (file-name-as-directory org-wikish-notes-directory)))
+   (file-name-as-directory org-wikish-wiki-directory)))
 
 (defun org-wikish-link-word-at-point ()
   (interactive)
@@ -107,30 +107,25 @@
     (if (not (file-exists-p path))
         (write-region "" nil path))))
 
-(defun org-wikish-link-word-at-point-and-enter (&optional dont-create)
-  (interactive)
-  (let ((word (thing-at-point 'symbol)))
-    (org-wikish-link-word-at-point)
-    (if (not dont-create)
-        (org-wikish-ensure-page-exists word))
-    (org-open-at-point)))
-
 (defun org-wikish-open-link-at-point ()
   (interactive)
   (if (org-in-regexp org-bracket-link-regexp 1)
-      (org-open-at-point)
+      (let ((word (thing-at-point 'symbol)))
+        (org-wikish-link-word-at-point)
+        (org-wikish-ensure-page-exists word)
+        (org-open-at-point))
     (org-wikish-link-word-at-point-and-enter)))
 
 (defun org-wikish-page-completion-list ()
   (mapcar (lambda (filename)
             (org-wikish-file-name-to-word filename))
           (cl-remove-if-not (lambda (filename) (string-match "\\.org$" filename))
-                            (directory-files org-wikish-notes-directory))))
+                            (directory-files org-wikish-wiki-directory))))
 
 ;;;###autoload
-(defun org-wikish-find-page (name)
+(defun org-wikish-find-page (word)
   (interactive (list (completing-read "Org file: " (org-wikish-page-completion-list))))
-  (org-open-file (org-wikish-word-to-path name)))
+  (org-open-file (org-wikish-word-to-path word)))
 
 (defun org-wikish-export-all-to-html ()
   (interactive)
@@ -140,7 +135,7 @@
        (with-temp-buffer
          (find-file file)
          (org-html-export-to-html)))
-     (file-expand-wildcards (concat (file-name-as-directory org-wikish-notes-directory)
+     (file-expand-wildcards (concat (file-name-as-directory org-wikish-wiki-directory)
                                     "*.org")))))
 
 ;;;###autoload
