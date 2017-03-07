@@ -49,27 +49,33 @@
 (defvar org-wikish-wiki-directory "/your/directory/here/")
 
 (defun org-wikish-split-camelcase (word)
+  "Get a list of subwords from the CamelCaseWord WORD."
   (let ((case-fold-search nil))
     (split-string
      (replace-regexp-in-string
       "\\([a-z0-9]\\)\\([A-Z]\\)" "\\1___\\2" word) "___")))
 
 (defun org-wikish-word-to-filename (word)
+  "Get a dash-separated org filename from the CamelCaseWord WORD."
   (string-join (list (string-join
                       (mapcar #'downcase (org-wikish-split-camelcase word)) "-") ".org")))
 
 (defun org-wikish-file-name-to-word (filename)
+  "Get a CamelCaseWord from FILENAME."
   (string-join
    (mapcar #'capitalize
            (split-string (replace-regexp-in-string "\\.org$" "" filename) "-"))))
 
 (defun org-wikish-file-name-to-path (filename)
+  "Get a full absolute path to a wiki page from FILENAME, using `org-wikish-wiki-directory'."
   (concat (file-name-as-directory org-wikish-wiki-directory) filename))
 
 (defun org-wikish-file-name (path)
+  "Get the filename part of PATH."
   (concat (file-name-base path) (file-name-extension path)))
 
 (defun org-wikish-maybe-relative-path (path &optional buffer-path)
+  "Return a relative version of the absolute path PATH if the current buffer's path (or the optional BUFFER-PATH) is in the `org-wikish-wiki-directory', and PATH otherwise."
   (let ((buffer-path (if buffer-path buffer-path buffer-file-name)))
     (if (and (file-name-absolute-p path)
              buffer-path
@@ -79,19 +85,23 @@
       path)))
 
 (defun org-wikish-word-to-path (word)
+  "Get an absolute path to a page from the CamelCaseWord WORD."
   (org-wikish-maybe-relative-path
    (concat (file-name-as-directory org-wikish-wiki-directory)
            (org-wikish-word-to-filename word))))
 
 (defun org-wikish-word-to-link (word)
+  "Get the text of an org link to a wiki page from the CamelCaseWord WORD."
   (string-join (list "[[" (org-wikish-word-to-path word) "][" word "]]")))
 
 (defun org-wikish-in-wiki-p (path)
+  "Return whether the given PATH is in the `org-wikish-wiki-directory'."
   (string-equal
    (file-name-directory path)
    (file-name-as-directory org-wikish-wiki-directory)))
 
 (defun org-wikish-link-word-at-point ()
+  "Turn the word at point into an org link to the corresponding page."
   (interactive)
   (save-excursion
     (let ((bounds (bounds-of-thing-at-point 'symbol)))
@@ -103,11 +113,13 @@
           (insert link))))))
 
 (defun org-wikish-ensure-page-exists (word)
+  "Create a wiki page for WORD if it doesn't exist."
   (let ((path (org-wikish-word-to-path word)))
     (if (not (file-exists-p path))
         (write-region "" nil path))))
 
 (defun org-wikish-open-link-at-point ()
+  "Turn the word at point into an org link to the corresponding page, and go to that page."
   (interactive)
   (if (org-in-regexp org-bracket-link-regexp 1)
       (let ((word (thing-at-point 'symbol)))
@@ -117,6 +129,7 @@
     (org-wikish-link-word-at-point-and-enter)))
 
 (defun org-wikish-page-completion-list ()
+  "Get a list of wiki pages as CamelCaseWords."
   (mapcar (lambda (filename)
             (org-wikish-file-name-to-word filename))
           (cl-remove-if-not (lambda (filename) (string-match "\\.org$" filename))
@@ -124,10 +137,12 @@
 
 ;;;###autoload
 (defun org-wikish-find-page (word)
+  "Go to or create the wiki page for WORD with ‘completing-read’."
   (interactive (list (completing-read "Org file: " (org-wikish-page-completion-list))))
   (org-open-file (org-wikish-word-to-path word)))
 
 (defun org-wikish-export-all-to-html ()
+  "Export all wiki pages to HTML pages in the same directory."
   (interactive)
   (save-excursion
     (mapc
@@ -148,6 +163,7 @@
 
 ;;;###autoload
 (defun org-wikish-recommended-global-keybindings ()
+  "Bind recommended global keys."
   (define-key global-map (kbd "C-c w f") #'org-wikish-find-page))
 
 (provide 'org-wikish)
