@@ -45,8 +45,8 @@
 (require 'subr-x)
 (require 'org)
 
-;;;###autoload
-(defvar org-wikish-wiki-directory "/your/directory/here/")
+(defcustom org-wikish-wiki-directory "/your/directory/here/"
+  "Directory for org-wikish files.")
 
 (defun org-wikish-split-camelcase (word)
   "Get a list of subwords from the CamelCaseWord WORD."
