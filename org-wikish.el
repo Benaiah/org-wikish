@@ -122,11 +122,11 @@
   "Turn the word at point into an org link to the corresponding page, and go to that page."
   (interactive)
   (if (org-in-regexp org-bracket-link-regexp 1)
-      (let ((word (thing-at-point 'symbol)))
-        (org-wikish-link-word-at-point)
-        (org-wikish-ensure-page-exists word)
-        (org-open-at-point))
-    (org-wikish-link-word-at-point-and-enter)))
+      (org-open-at-point)
+    (let ((word (thing-at-point 'symbol)))
+      (org-wikish-link-word-at-point)
+      (org-wikish-ensure-page-exists word)
+      (org-open-at-point))))
 
 (defun org-wikish-page-completion-list ()
   "Get a list of wiki pages as CamelCaseWords."
