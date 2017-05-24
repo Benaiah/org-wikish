@@ -112,6 +112,17 @@
           (delete-region (car bounds) (cdr bounds))
           (insert link))))))
 
+(defun org-wikish-link-region (page)
+  "Links the region to an autocompleted wiki page."
+  (interactive (list (completing-read "Org file: " (org-wikish-page-completion-list))))
+  (if (region-active-p)
+      (save-excursion
+        (let ((phrase (buffer-substring-no-properties (region-beginning) (region-end)))
+              (link (org-wikish-word-to-link page)))
+          (delete-region (region-beginning) (region-end))
+          (insert (string-join (list "[[" (org-wikish-word-to-path page) "][" phrase "]]")))))
+    nil))
+
 (defun org-wikish-ensure-page-exists (word)
   "Create a wiki page for WORD if it doesn't exist."
   (let ((path (org-wikish-word-to-path word)))
