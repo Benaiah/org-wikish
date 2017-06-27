@@ -45,8 +45,14 @@
 (require 'subr-x)
 (require 'org)
 
-(defcustom org-wikish-wiki-directory "/your/directory/here/"
-  "Directory for org-wikish files.")
+(defgroup org-wikish nil
+  "A simple org wiki."
+  :group 'org)
+
+(defcustom org-wikish-wiki-directory (locate-user-emacs-file ".org-wikish")
+  "Directory for org-wikish files."
+  :group 'org-wikish
+  :type 'directory)
 
 (defun org-wikish-split-camelcase (word)
   "Get a list of subwords from the CamelCaseWord WORD."
