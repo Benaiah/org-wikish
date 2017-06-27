@@ -49,7 +49,7 @@
   "A simple org wiki."
   :group 'org)
 
-(defcustom org-wikish-wiki-directory "/your/directory/here/"
+(defcustom org-wikish-wiki-directory (locate-user-emacs-file ".org-wikish")
   "Directory for org-wikish files."
   :group 'org-wikish
   :type 'directory)
